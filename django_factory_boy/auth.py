@@ -7,6 +7,9 @@ from django.db.models import get_model
 
 from django_factory_boy import contenttypes
 
+if DJANGO_VERSION[:2] >= (1, 4):
+    from django.utils import timezone
+
 import factory
 
 __all__ = (
@@ -54,8 +57,12 @@ class UserF(factory.Factory):
     is_staff = False
     is_active = True
     is_superuser = False
-    last_login = datetime.datetime(2000, 1, 1)
-    date_joined = datetime.datetime(1999, 1, 1)
+    if DJANGO_VERSION[:2] >= (1, 4) and settings.USE_TZ:
+        last_login = timezone.datetime(2000, 1, 1).replace(tzinfo=timezone.utc)
+        date_joined = timezone.datetime(1999, 1, 1).replace(tzinfo=timezone.utc)
+    else:
+        last_login = datetime.datetime(2000, 1, 1)
+        date_joined = datetime.datetime(1999, 1, 1)
 
 def user_create(cls, **kwargs):
     # figure out the profile's related name and strip profile's kwargs
