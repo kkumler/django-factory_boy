@@ -10,6 +10,13 @@ from django_factory_boy import contenttypes
 if DJANGO_VERSION[:2] >= (1, 4):
     from django.utils import timezone
 
+if DJANGO_VERSION[:2] >= (1, 5):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+else:
+    User = models.User
+
+
 import factory
 
 __all__ = (
@@ -39,7 +46,7 @@ class GroupF(factory.Factory):
     name = factory.Sequence(lambda n: "group%s" % n)
 
 class UserF(factory.Factory):
-    FACTORY_FOR = models.User
+    FACTORY_FOR = User
 
     @classmethod
     def _setup_next_sequence(cls):
